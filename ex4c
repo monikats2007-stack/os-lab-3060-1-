@@ -1,0 +1,66 @@
+#include <stdio.h>
+
+struct process {
+    int id;
+    int bt;
+    int wt;
+    int tat;
+    int priority;
+};
+
+int main() {
+    int n, i, j;
+    struct process temp;
+
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    struct process proc[n];
+
+    for(i = 0; i < n; i++) {
+        proc[i].id = i + 1;
+        printf("\nEnter Burst Time and Priority for P%d:\n", i+1);
+        printf("Burst Time: ");
+        scanf("%d", &proc[i].bt);
+        printf("Priority: ");
+        scanf("%d", &proc[i].priority);
+    }
+
+    // Sort by priority
+    for(i = 0; i < n-1; i++) {
+        for(j = i+1; j < n; j++) {
+            if(proc[i].priority > proc[j].priority) {
+                temp = proc[i];
+                proc[i] = proc[j];
+                proc[j] = temp;
+            }
+        }
+    }
+
+    proc[0].wt = 0;
+    for(i = 1; i < n; i++)
+        proc[i].wt = proc[i-1].wt + proc[i-1].bt;
+
+    for(i = 0; i < n; i++)
+        proc[i].tat = proc[i].wt + proc[i].bt;
+
+    float totalWT = 0, totalTAT = 0;
+
+    printf("\nProcess\tBT\tPriority\tWT\tTAT\n");
+    for(i = 0; i < n; i++) {
+        printf("P%d\t%d\t%d\t\t%d\t%d\n",
+               proc[i].id,
+               proc[i].bt,
+               proc[i].priority,
+               proc[i].wt,
+               proc[i].tat);
+
+        totalWT += proc[i].wt;
+        totalTAT += proc[i].tat;
+    }
+
+    printf("\nAverage Waiting Time: %.2f", totalWT/n);
+    printf("\nAverage Turnaround Time: %.2f\n", totalTAT/n);
+
+    return 0;
+}
